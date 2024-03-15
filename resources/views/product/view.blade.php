@@ -14,14 +14,15 @@
                 <h2>Invalid Data</h2>
             </div>   
         @endif
-        <a href="{{ url('/') }}"><button class="back-btn">Back</button></a>
+        <a href="{{ route('productList') }}"><button class="back-btn">Back</button></a>
 
-        <form id="payment-form" action="{{ url('/checkout') }}" method="POST">
+        <form id="payment-form" action="{{ route('checkout') }}" method="POST">
             @csrf
             <div class="form-row">
                 <label for="cardholder-name">Cardholder Name</label>
                 <input id="cardholder-name" class="cardholder-detail" type="text" name="name">
                 <input type="hidden" name="id" value="{{ $product->uuid }}">
+                <input type="hidden" name="intent" value="{{ $intent->client_secret }}">
             </div>
             <div class="form-row">
                 <label for="card-element"> Credit or debit card</label>
@@ -29,7 +30,7 @@
                     <!-- A Stripe Element will be inserted here. -->
                 </div>
             </div>
-            <button id="submit-btn">Pay Now</button>
+            <button id="submit-btn" data-secret="{{ $intent->client_secret }}">Pay Now</button>
         </form>
     </div>
 </body>

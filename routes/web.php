@@ -17,8 +17,11 @@ use App\Http\Controllers\{
 |
 */
 
-Route::get('/', [ProductController::class, 'index']);
-Route::get('/product/view/{id}', [ProductController::class, 'view']);
-
-Route::get('/payment', [PaymentController::class, 'index']);
-Route::post('/checkout', [PaymentController::class, 'checkout']);
+Route::controller(ProductController::class)->group(function () {
+    Route::get('/', 'index')->name('productList');
+    Route::get('/product/view/{product}', 'view')->name('productView');
+});
+Route::controller(PaymentController::class)->group(function () {
+    Route::get('/payment', 'index')->name('paymentResult');
+    Route::post('/checkout', 'checkout')->name('checkout');
+});

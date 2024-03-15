@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use Illuminate\Contracts\View\View;
-use App\Models\Product;
+use App\Models\{
+    User,
+    Product
+};
 
 
 class ProductController extends Controller
@@ -15,9 +18,10 @@ class ProductController extends Controller
         return view('product.list', ['products' => $products]);
     }
 
-    public function view($id)
+    public function view(Product $product)
     {
-        $product = Product::where('uuid', $id)->first();
-        return view('product.view', ['product' => $product]);
+        $user = User::first();
+        $product = Product::where('uuid', $product->uuid)->first();
+        return view('product.view', ['product' => $product, 'intent' => $user->createSetupIntent()]);
     }
 }

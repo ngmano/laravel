@@ -10,6 +10,7 @@ use Stripe\{
 };
 use Exception;
 use App\Models\Product;
+use App\Models\User;
 
 class PaymentController extends Controller
 {
@@ -29,6 +30,21 @@ class PaymentController extends Controller
             
             Stripe::setApiKey(env('STRIPE_SECRET'));
 
+            $user = User::first();
+            $user->createOrGetStripeCustomer();
+            $user->updateDefaultPaymentMethod($request->stripeToken);
+          
+            // $stripeCharge = $user->charge(
+            //     $product->price * 100, 
+            //     $request->stripeToken,
+            //     [
+            //         'currency' => 'inr',
+            //         'return_url' => $returnUrl,
+            //         'confirmation_method' => 'manual',
+            //     ]
+            // );
+            // echo '<pre>'; print_r($stripeCharge); exit;
+            
             // Create a charge
             $paymentIntent = PaymentIntent::create([
                 'amount' => $product->price * 100, 
@@ -37,8 +53,12 @@ class PaymentController extends Controller
                 'payment_method' => $request->stripeToken,
                 'confirm' => true,
                 'return_url' => $returnUrl,
-            ]);   
-            return redirect('/payment')->with(['status' => 'SUCCESS']);
+                'customer' => $user->stripe_id
+            ]);
+            
+            $redirectUrl = $paymentIntent->next_action->redirect_to_url->return_url;
+          
+            return redirect($redirectUrl)->with(['status' => 'SUCCESS']);
         } catch (Exception $e) {
             return redirect('/payment')->with(['status' => 'FAILED']);
         }
