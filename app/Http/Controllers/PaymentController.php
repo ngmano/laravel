@@ -39,12 +39,11 @@ class PaymentController extends Controller
             //     $request->stripeToken,
             //     [
             //         'currency' => 'inr',
-            //         'return_url' => $returnUrl,
-            //         'confirmation_method' => 'manual',
+            //         'return_url' => $returnUrl
             //     ]
             // );
             // echo '<pre>'; print_r($stripeCharge); exit;
-            
+
             // Create a charge
             $paymentIntent = PaymentIntent::create([
                 'amount' => $product->price * 100, 
